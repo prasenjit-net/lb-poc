@@ -9,6 +9,8 @@ import {RestApplication} from '@loopback/rest';
 import {ServiceMixin} from '@loopback/service-proxy';
 import * as path from 'path';
 import {MySequence} from './sequence';
+import {AuthenticationComponent, registerAuthenticationStrategy} from '@loopback/authentication';
+import {MySimpleAuthStrategy} from './auth-strategy';
 
 export class LbPocApplication extends BootMixin(
   ServiceMixin(RepositoryMixin(RestApplication)),
@@ -27,6 +29,10 @@ export class LbPocApplication extends BootMixin(
       path: '/explorer',
     });
     this.component(RestExplorerComponent);
+
+    // Setup Authentication
+    this.component(AuthenticationComponent);
+    registerAuthenticationStrategy(this, MySimpleAuthStrategy);
 
     this.projectRoot = __dirname;
     // Customize @loopback/boot Booter Conventions here
