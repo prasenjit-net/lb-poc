@@ -40,7 +40,7 @@ export class PingController {
       '200': PING_RESPONSE,
     },
   })
-  @authenticate('simple')
+  @authenticate('token_security')
   ping(): object {
     // Reply with a greeting, the current time, the url, and request headers
     return {

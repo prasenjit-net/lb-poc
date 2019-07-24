@@ -2,7 +2,7 @@ import {AuthenticationStrategy, UserProfile} from '@loopback/authentication';
 import {Request, HttpErrors} from '@loopback/rest';
 
 export class MySimpleAuthStrategy implements AuthenticationStrategy {
-  name: string = 'simple';
+  name: string = 'token_security';
 
   authenticate(req: Request): Promise<UserProfile | undefined> {
     // check for basic auth header
