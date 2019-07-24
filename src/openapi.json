@@ -1,0 +1,251 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Loopback POC API",
+        "version": "1.0.0",
+        "description": "This is an Open API Loopback POC.",
+        "termsOfService": "http://localhost:3000/tos.html",
+        "contact": {
+            "name": "Prasenjit Purohit",
+            "email": "prasenjit@prasenjit.net"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        }
+    },
+    "servers": [
+        {
+            "url": "http://localhost:3000",
+            "description": "Local Development Server"
+        }
+    ],
+    "paths": {
+        "/user/me": {
+            "get": {
+                "tags": [
+                    "security"
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserDataResponse"
+                                }
+                            }
+                        },
+                        "description": "Success Response"
+                    }
+                },
+                "security": [
+                    {
+                        "token_security": [
+                        ]
+                    }
+                ],
+                "operationId": "getMe",
+                "summary": "Get Current User",
+                "description": "Return the current user who is logged in"
+            }
+        },
+        "/login": {
+            "post": {
+                "requestBody": {
+                    "description": "Login request body",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/LoginRequest"
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "security"
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserDataResponse"
+                                }
+                            }
+                        },
+                        "description": "Login Success"
+                    },
+                    "401": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResponse"
+                                }
+                            }
+                        },
+                        "description": "Login Failed"
+                    }
+                },
+                "operationId": "login",
+                "summary": "Login",
+                "description": "Log in with user credentials"
+            },
+            "delete": {
+                "tags": [
+                    "security"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Logout Success"
+                    }
+                },
+                "operationId": "logout",
+                "summary": "Logout",
+                "description": "Logout from the system"
+            }
+        },
+        "/user": {
+            "get": {
+                "tags": [
+                    "user"
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/UserDataResponse"
+                                    }
+                                }
+                            }
+                        },
+                        "description": "User list success response"
+                    }
+                },
+                "operationId": "listUsers",
+                "summary": "List Users",
+                "description": "List all available users"
+            },
+            "post": {
+                "requestBody": {
+                    "description": "Create a User Request",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UserCreate"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "tags": [
+                    "user"
+                ],
+                "responses": {
+                    "201": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserDataResponse"
+                                }
+                            }
+                        },
+                        "description": "User successfully created"
+                    },
+                    "400": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResponse"
+                                }
+                            }
+                        },
+                        "description": "If invalid request is provided"
+                    }
+                },
+                "operationId": "create_user",
+                "summary": "Create User",
+                "description": "Create new user, later can be used for authentication"
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "ApiResponse": {
+                "type": "object",
+                "properties": {
+                    "code": {
+                        "format": "int32",
+                        "type": "integer"
+                    },
+                    "type": {
+                        "type": "string"
+                    },
+                    "message": {
+                        "type": "string"
+                    }
+                }
+            },
+            "LoginRequest": {
+                "type": "object",
+                "properties": {
+                    "username": {
+                        "type": "string"
+                    },
+                    "password": {
+                        "type": "string"
+                    }
+                }
+            },
+            "UserDataResponse": {
+                "type": "object",
+                "properties": {
+                    "username": {
+                        "type": "string"
+                    },
+                    "email": {
+                        "type": "string"
+                    }
+                }
+            },
+            "UserCreate": {
+                "required": [
+                    "username",
+                    "email",
+                    "password"
+                ],
+                "type": "object",
+                "properties": {
+                    "username": {
+                        "type": "string"
+                    },
+                    "email": {
+                        "type": "string"
+                    },
+                    "password": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "securitySchemes": {
+            "token_security": {
+                "type": "apiKey",
+                "name": "api_key",
+                "in": "header"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "security",
+            "description": "A Security related operations"
+        },
+        {
+            "name": "user",
+            "description": "User related operations"
+        }
+    ]
+}
