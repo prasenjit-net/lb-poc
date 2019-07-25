@@ -59,7 +59,8 @@
                                 "$ref": "#/components/schemas/LoginRequest"
                             }
                         }
-                    }
+                    },
+                    "required": true
                 },
                 "tags": [
                     "security"
@@ -165,7 +166,7 @@
                         "description": "If invalid request is provided"
                     }
                 },
-                "operationId": "create_user",
+                "operationId": "createUser",
                 "summary": "Create User",
                 "description": "Create new user, later can be used for authentication"
             }
