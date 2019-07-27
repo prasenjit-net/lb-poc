@@ -31,11 +31,30 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/UserDataResponse"
+                                    "$ref": "#/components/schemas/UserSummary"
                                 }
                             }
                         },
                         "description": "Success Response"
+                    },
+                    "401": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                },
+                                "examples": {
+                                    "un authorized": {
+                                        "value": {
+                                            "code": 401,
+                                            "type": "error",
+                                            "message": "Invalid Credentials"
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "description": "Erro when no authentication token provided"
                     }
                 },
                 "security": [
@@ -50,13 +69,15 @@
             }
         },
         "/login": {
+            "summary": "Login API",
+            "description": "",
             "post": {
                 "requestBody": {
                     "description": "Login request body",
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/LoginRequest"
+                                "$ref": "#/components/schemas/Credentials"
                             }
                         }
                     },
@@ -70,7 +91,14 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/UserDataResponse"
+                                    "$ref": "#/components/schemas/TokenResponse"
+                                },
+                                "examples": {
+                                    "success": {
+                                        "value": {
+                                            "token": "valid.jwt.token"
+                                        }
+                                    }
                                 }
                             }
                         },
@@ -80,7 +108,23 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/ApiResponse"
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                },
+                                "examples": {
+                                    "invalid": {
+                                        "value": {
+                                            "code": 401,
+                                            "type": "error",
+                                            "message": "Invalid Credentials"
+                                        }
+                                    },
+                                    "missing": {
+                                        "value": {
+                                            "code": 401,
+                                            "type": "error",
+                                            "message": "Missing Credentials"
+                                        }
+                                    }
                                 }
                             }
                         },
@@ -89,7 +133,7 @@
                 },
                 "operationId": "login",
                 "summary": "Login",
-                "description": "Log in with user credentials"
+                "description": "Log in with user credentials and get a token"
             },
             "delete": {
                 "tags": [
@@ -117,12 +161,22 @@
                                 "schema": {
                                     "type": "array",
                                     "items": {
-                                        "$ref": "#/components/schemas/UserDataResponse"
+                                        "$ref": "#/components/schemas/UserSummary"
                                     }
                                 }
                             }
                         },
                         "description": "User list success response"
+                    },
+                    "400": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": "Invalid data"
                     }
                 },
                 "operationId": "listUsers",
@@ -149,7 +203,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/UserDataResponse"
+                                    "$ref": "#/components/schemas/UserSummary"
                                 }
                             }
                         },
@@ -159,7 +213,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/ApiResponse"
+                                    "$ref": "#/components/schemas/ErrorResponse"
                                 }
                             }
                         },
@@ -174,43 +228,6 @@
     },
     "components": {
         "schemas": {
-            "ApiResponse": {
-                "type": "object",
-                "properties": {
-                    "code": {
-                        "format": "int32",
-                        "type": "integer"
-                    },
-                    "type": {
-                        "type": "string"
-                    },
-                    "message": {
-                        "type": "string"
-                    }
-                }
-            },
-            "LoginRequest": {
-                "type": "object",
-                "properties": {
-                    "username": {
-                        "type": "string"
-                    },
-                    "password": {
-                        "type": "string"
-                    }
-                }
-            },
-            "UserDataResponse": {
-                "type": "object",
-                "properties": {
-                    "username": {
-                        "type": "string"
-                    },
-                    "email": {
-                        "type": "string"
-                    }
-                }
-            },
             "UserCreate": {
                 "required": [
                     "username",
@@ -220,14 +237,120 @@
                 "type": "object",
                 "properties": {
                     "username": {
+                        "description": "Username to use for login",
                         "type": "string"
                     },
                     "email": {
+                        "description": "Email address for communication",
                         "type": "string"
                     },
                     "password": {
+                        "description": "Password for login",
+                        "type": "string"
+                    },
+                    "firstName": {
+                        "description": "First name of the user",
+                        "type": "string"
+                    },
+                    "lastName": {
+                        "description": "Last name of the user",
                         "type": "string"
                     }
+                },
+                "example": {
+                    "username": "admin",
+                    "email": "admin@prasenjit.net",
+                    "password": "password",
+                    "firstName": "Admin",
+                    "lastName": "Admin"
+                }
+            },
+            "ErrorResponse": {
+                "description": "An object represents a error scenario",
+                "required": [
+                    "code",
+                    "message"
+                ],
+                "type": "object",
+                "properties": {
+                    "code": {
+                        "format": "int32",
+                        "description": "Http erro status code",
+                        "type": "integer"
+                    },
+                    "type": {
+                        "description": "Type of the error",
+                        "type": "string"
+                    },
+                    "message": {
+                        "description": "Error message",
+                        "type": "string"
+                    }
+                }
+            },
+            "Credentials": {
+                "required": [
+                    "username",
+                    "password"
+                ],
+                "type": "object",
+                "properties": {
+                    "username": {
+                        "type": "string"
+                    },
+                    "password": {
+                        "format": "password",
+                        "type": "string"
+                    }
+                }
+            },
+            "UserSummary": {
+                "description": "A summary of a single user profile data",
+                "required": [
+                    "email",
+                    "username"
+                ],
+                "type": "object",
+                "properties": {
+                    "username": {
+                        "description": "Username to use for login",
+                        "type": "string"
+                    },
+                    "email": {
+                        "description": "Email address for communication",
+                        "type": "string"
+                    },
+                    "firstName": {
+                        "description": "First name of the user",
+                        "type": "string"
+                    },
+                    "lastName": {
+                        "description": "Last name of the user",
+                        "type": "string"
+                    }
+                },
+                "example": {
+                    "username": "admin",
+                    "email": "admin@prasenjit.net",
+                    "firstName": "Admin",
+                    "lastName": "Admin"
+                }
+            },
+            "TokenResponse": {
+                "title": "Root Type for TokenResponse",
+                "description": "A response which contains a login success token",
+                "required": [
+                    "token"
+                ],
+                "type": "object",
+                "properties": {
+                    "token": {
+                        "description": "JWT token to be passed in further requests for getting access",
+                        "type": "string"
+                    }
+                },
+                "example": {
+                    "token": "some.jwt.token"
                 }
             }
         },
