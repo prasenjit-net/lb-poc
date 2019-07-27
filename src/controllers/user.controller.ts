@@ -3,6 +3,9 @@ import {operation, requestBody} from '@loopback/rest';
 import {UserDataResponse, UserCreate, User} from '../models';
 import {UserRepository} from '../repositories';
 import {repository} from '@loopback/repository';
+import {inject} from '@loopback/context';
+import {PasswordHasherBindings} from '../keys';
+import {PasswordHasher} from '../services/password-hash-service';
 
 /**
  * The controller class is generated from OpenAPI spec with operations tagged
@@ -10,7 +13,9 @@ import {repository} from '@loopback/repository';
  * User related operations
  */
 export class UserController {
-  constructor(@repository(UserRepository) private _userRepo: UserRepository) {
+  constructor(@repository(UserRepository) private _userRepo: UserRepository,
+              @inject(PasswordHasherBindings.PASSWORD_HASHER)
+              public passwordHasher: PasswordHasher) {
   }
 
   /**
@@ -44,7 +49,11 @@ export class UserController {
   @operation('post', '/user')
   async createUser(@requestBody() _requestBody: UserCreate): Promise<UserDataResponse> {
     const user = new User(_requestBody);
+    user.password = await this.passwordHasher.hashPassword(user.password);
     const savedUser = await this._userRepo.save(user);
+    delete savedUser.password;
+    delete savedUser.authority;
+    delete savedUser.id;
     return new UserDataResponse(savedUser);
   }
 

@@ -2,7 +2,7 @@
   "name": "mongods",
   "connector": "mongodb",
   "url": "",
-  "host": "192.168.99.100",
+  "host": "localhost",
   "port": 32768,
   "user": "",
   "password": "",

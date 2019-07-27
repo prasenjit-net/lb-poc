@@ -17,13 +17,13 @@ export class UserDataResponse {
    * 
    */
   @property()
-  username?: string;
+  username: string;
 
   /**
    * 
    */
   @property()
-  email?: string;
+  email: string;
 
 }
 

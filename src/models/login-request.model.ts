@@ -17,13 +17,13 @@ export class LoginRequest {
    * 
    */
   @property()
-  username?: string;
+  username: string;
 
   /**
    * 
    */
   @property()
-  password?: string;
+  password: string;
 
 }
 
