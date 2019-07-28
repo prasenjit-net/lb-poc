@@ -1,10 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {operation, requestBody} from '@loopback/rest';
-import {LoginRequest, User, TokenResponse} from '../models';
-import {authenticate, AuthenticationBindings, TokenService, UserProfile, UserService} from '@loopback/authentication';
+import {UserSummary, Credentials, TokenResponse, User} from '../models';
 import {inject} from '@loopback/context';
 import {TokenServiceBindings, UserServiceBindings} from '../keys';
-import {Credentials} from '../repositories';
+import {authenticate, AuthenticationBindings, TokenService, UserProfile, UserService} from '@loopback/authentication';
 
 /**
  * The controller class is generated from OpenAPI spec with operations tagged
@@ -24,22 +23,22 @@ export class SecurityController {
 
    * @returns Success Response
    */
-  @operation('get', '/user/me')
   @authenticate('token_security')
+  @operation('get', '/user/me')
   async getMe(@inject(AuthenticationBindings.CURRENT_USER)
-                currentUserProfile: UserProfile): Promise<UserProfile> {
-    return currentUserProfile;
+                currentUserProfile: UserProfile): Promise<UserSummary> {
+    return new UserSummary(currentUserProfile);
   }
 
   /**
-   * Log in with user credentials
+   * Log in with user credentials and get a token
    *
 
    * @param _requestBody Login request body
    * @returns Login Success
    */
   @operation('post', '/login')
-  async login(@requestBody() _requestBody: LoginRequest): Promise<TokenResponse> {
+  async login(@requestBody() _requestBody: Credentials): Promise<TokenResponse> {
     // ensure the user exists, and the password is correct
     const user = await this.userService.verifyCredentials(_requestBody);
 

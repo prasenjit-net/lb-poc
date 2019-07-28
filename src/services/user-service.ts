@@ -1,6 +1,6 @@
 import {HttpErrors} from '@loopback/rest';
 import {Credentials, UserRepository} from '../repositories';
-import {User} from '../models';
+import {User, UserProfileExt} from '../models';
 import {UserService, UserProfile} from '@loopback/authentication';
 import {repository} from '@loopback/repository';
 import {PasswordHasherBindings} from '../keys';
@@ -12,7 +12,8 @@ export class MyUserService implements UserService<User, Credentials> {
     @repository(UserRepository) public userRepository: UserRepository,
     @inject(PasswordHasherBindings.PASSWORD_HASHER)
     public passwordHasher: PasswordHasher,
-  ) {}
+  ) {
+  }
 
   async verifyCredentials(credentials: Credentials): Promise<User> {
     const foundUser = await this.userRepository.findOne({
@@ -38,12 +39,8 @@ export class MyUserService implements UserService<User, Credentials> {
 
   convertToUserProfile(user: User): UserProfile {
     // since first name and lastName are optional, no error is thrown if not provided
-    let userName = '';
-    if (user.firstName) userName = `${user.firstName}`;
-    if (user.lastName)
-      userName = user.firstName
-        ? `${userName} ${user.lastName}`
-        : `${user.lastName}`;
-    return {id: user.id, name: userName};
+    const profile = new UserProfileExt(user);
+    profile.name = `${user.firstName} ${user.lastName}`;
+    return profile;
   }
 }

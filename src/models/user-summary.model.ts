@@ -2,12 +2,12 @@
 import {model, property} from '@loopback/repository';
 
 /**
- * The model class is generated from OpenAPI schema - UserCreate
- * UserCreate
+ * The model class is generated from OpenAPI schema - UserSummary
+ * A summary of a single user profile data
  */
-@model({name: 'UserCreate'})
-export class UserCreate {
-  constructor(data?: Partial<UserCreate>) {
+@model({name: 'UserSummary'})
+export class UserSummary {
+  constructor(data?: Partial<UserSummary>) {
     if (data != null && typeof data === 'object') {
       Object.assign(this, data);
     }
@@ -24,12 +24,6 @@ export class UserCreate {
    */
   @property({required: true})
   email: string;
-
-  /**
-   * Password for login
-   */
-  @property({required: true})
-  password: string;
 
   /**
    * First name of the user

@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {operation, requestBody} from '@loopback/rest';
-import {UserDataResponse, UserCreate, User} from '../models';
-import {UserRepository} from '../repositories';
+import {User, UserCreate, UserSummary} from '../models';
 import {repository} from '@loopback/repository';
+import {UserRepository} from '../repositories';
 import {inject} from '@loopback/context';
 import {PasswordHasherBindings} from '../keys';
 import {PasswordHasher} from '../services/password-hash-service';
@@ -20,20 +20,20 @@ export class UserController {
 
   /**
    * List all available users
-   *
+   * 
 
    * @returns User list success response
    */
   @operation('get', '/user')
-  async listUsers(): Promise<UserDataResponse[]> {
+  async listUsers(): Promise<UserSummary[]> {
     const users = await this._userRepo.find();
-    const respArray: UserDataResponse[] = [];
+    const respArray: UserSummary[] = [];
     for (const it in users) {
       const user = users[it];
       delete user.password;
       delete user.authority;
       delete user.id;
-      const udr: UserDataResponse = new UserDataResponse(user);
+      const udr: UserSummary = new UserSummary(user);
       respArray.push(udr);
     }
     return respArray;
@@ -41,20 +41,20 @@ export class UserController {
 
   /**
    * Create new user, later can be used for authentication
-   *
+   * 
 
    * @param _requestBody Create a User Request
    * @returns User successfully created
    */
   @operation('post', '/user')
-  async createUser(@requestBody() _requestBody: UserCreate): Promise<UserDataResponse> {
+  async createUser(@requestBody() _requestBody: UserCreate): Promise<UserSummary> {
     const user = new User(_requestBody);
     user.password = await this.passwordHasher.hashPassword(user.password);
     const savedUser = await this._userRepo.save(user);
     delete savedUser.password;
     delete savedUser.authority;
     delete savedUser.id;
-    return new UserDataResponse(savedUser);
+    return new UserSummary(savedUser);
   }
 
 }

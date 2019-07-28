@@ -2,12 +2,12 @@
 import {model, property} from '@loopback/repository';
 
 /**
- * The model class is generated from OpenAPI schema - LoginRequest
- * LoginRequest
+ * The model class is generated from OpenAPI schema - Credentials
+ * Credentials
  */
-@model({name: 'LoginRequest'})
-export class LoginRequest {
-  constructor(data?: Partial<LoginRequest>) {
+@model({name: 'Credentials'})
+export class Credentials {
+  constructor(data?: Partial<Credentials>) {
     if (data != null && typeof data === 'object') {
       Object.assign(this, data);
     }
@@ -16,13 +16,13 @@ export class LoginRequest {
   /**
    * 
    */
-  @property()
+  @property({required: true})
   username: string;
 
   /**
    * 
    */
-  @property()
+  @property({required: true})
   password: string;
 
 }
