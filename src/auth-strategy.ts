@@ -15,26 +15,15 @@ export class MySimpleAuthStrategy implements AuthenticationStrategy {
   }
 
   static extractCredentials(request: Request): string {
-    if (!request.headers.authorization) {
-      throw new HttpErrors.Unauthorized(`Authorization header not found.`);
+    if (!request.headers.api_key) {
+      throw new HttpErrors.Unauthorized(`api_key header not found.`);
     }
 
     // for example: Bearer xxx.yyy.zzz
-    const authHeaderValue = request.headers.authorization;
-
-    if (!authHeaderValue.startsWith('Bearer')) {
-      throw new HttpErrors.Unauthorized(
-        `Authorization header is not of type 'Bearer'.`,
-      );
-    }
-
-    //split the string into 2 parts: 'Bearer ' and the `xxx.yyy.zzz`
-    const parts = authHeaderValue.split(' ');
-    if (parts.length !== 2)
-      throw new HttpErrors.Unauthorized(
-        `Authorization header value has too many parts. It must follow the pattern: 'Bearer xx.yy.zz' where xx.yy.zz is a valid JWT token.`,
-      );
-    return parts[1];
+    const authHeaderValue = request.headers.api_key;
+    console.log(authHeaderValue);
+    console.log(typeof authHeaderValue);
+    return (authHeaderValue instanceof Array) ? authHeaderValue[0] : authHeaderValue;
   }
 
 }
