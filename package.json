@@ -64,7 +64,7 @@
     "loopback-connector-mongodb": "^5.0.0"
   },
   "devDependencies": {
-    "@loopback/build": "^2.0.4",
+    "@loopback/build": "^9.0.6",
     "@loopback/eslint-config": "^2.0.1",
     "@loopback/testlab": "^1.7.0",
     "@types/bcryptjs": "^2.4.2",
